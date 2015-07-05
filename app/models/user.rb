@@ -30,7 +30,7 @@ class User
 
   after_save do
     unless self.confirmed or self.confirmation_token
-      Grapi::Email.send_email(self.email, {body: "<h1>Hola</h1>"});
+      ConfirmationInstructionsMail.new(self).send
     end
   end
 

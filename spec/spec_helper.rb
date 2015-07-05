@@ -5,11 +5,13 @@ require 'require_all'
 require 'rack/test'
 require 'factory_girl'
 
+require_all 'lib'
 require_all 'app'
 require_all 'spec/factories'
 
 ENV['ENV'] = 'test'
 
+Grapi::Config.load('test')
 Mongolow::Driver.initialize('127.0.0.1', 27017, 'grapi_test')
 Mongolow::Driver.drop_database
 

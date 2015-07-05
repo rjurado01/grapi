@@ -7,6 +7,7 @@ gem 'rack-cors'
 gem 'racksh'
 gem 'require_all'
 gem 'factory_girl'
+gem 'slim'
 
 gem 'mongolow', :git => 'https://github.com/rjurado01/mongolow.git'
 
