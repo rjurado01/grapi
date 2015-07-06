@@ -1,6 +1,7 @@
 # files
 *.swp
 config/application.yml
+log/*.log
 
 # folders
 vendor/
