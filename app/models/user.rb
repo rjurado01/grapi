@@ -7,7 +7,8 @@ class User
   field :password
 
   field :session_token
-  field :confirmed
+
+  field :confirmed_at
   field :confirmation_token
 
   validate do
@@ -29,9 +30,7 @@ class User
   end
 
   after_save do
-    unless self.confirmed or self.confirmation_token
-      ConfirmationInstructionsMail.new(self).send
-    end
+    self.send_confirmation
   end
 
   def self.generate_token
@@ -45,10 +44,6 @@ class User
     User.find({email: email, password: Digest::SHA1.hexdigest(password)}).first
   end
 
-  def posts
-    Post.find({user_id: self.id})
-  end
-
   def ensure_session_token!
     self.session_token = User.generate_token unless self.session_token
     self.set('session_token', self.session_token)
@@ -56,5 +51,15 @@ class User
 
   def remove_session_token!
     self.set('session_token', nil)
+  end
+
+  def posts
+    Post.find({user_id: self.id})
+  end
+
+  def send_confirmation
+    unless self.confirmed_at or self.confirmation_token
+      ConfirmationInstructionsMail.new(self).send
+    end
   end
 end

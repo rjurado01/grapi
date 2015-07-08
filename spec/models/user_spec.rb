@@ -2,41 +2,16 @@ require 'spec_helper'
 
 describe User do
   describe "Fields" do
-    it "have field :name" do
-      expect(User.fields.include?('name')).to eq(true)
-    end
-
-    it "have field :email" do
-      expect(User.fields.include?('email')).to eq(true)
-    end
-
-    it "have field :password" do
-      expect(User.fields.include?('password')).to eq(true)
-    end
-
-    it "have field :session_token" do
-      expect(User.fields.include?('session_token')).to eq(true)
-    end
+    it { is_expected.to have_field('name') }
+    it { is_expected.to have_field('email') }
+    it { is_expected.to have_field('password') }
+    it { is_expected.to have_field('session_token') }
   end
 
   describe "Validations" do
-    it "validate presence of :name" do
-      post = User.new
-      post.validate
-      expect(post._errors).to be_include('name')
-    end
-
-    it "validate presence of :email" do
-      post = User.new
-      post.validate
-      expect(post._errors).to be_include('email')
-    end
-
-    it "validate presence of :password" do
-      post = User.new
-      post.validate
-      expect(post._errors).to be_include('password')
-    end
+    it { is_expected.to validate_presence_of('name') }
+    it { is_expected.to validate_presence_of('email') }
+    it { is_expected.to validate_presence_of('password') }
   end
 
   describe "Class methods" do
@@ -55,16 +30,7 @@ describe User do
     end
   end
 
-  describe "Methods" do
-    describe "posts" do
-      it "returns user posts" do
-        user = FactoryGirl.create(:user)
-        post1 = FactoryGirl.create(:post, user_id: user.id)
-        post2 = FactoryGirl.create(:post, user_id: user.id)
-        expect(user.posts.all.map(&:id)).to eq([post1.id, post2.id])
-      end
-    end
-
+  describe "Instance methods" do
     describe "ensure_session_token!" do
       context "when user not has session token" do
         it "adds token to user" do
@@ -88,6 +54,32 @@ describe User do
         user = FactoryGirl.create(:user, session_token: '123456')
         user.remove_session_token!
         expect(user.reload.session_token).to eq(nil)
+      end
+    end
+
+    describe "send_confirmation" do
+      it "send email confirmation" do
+        user = FactoryGirl.create(:user_unconfirmed)
+        expect(Grapi::Mail.last_email.to).to eq(user.email)
+      end
+    end
+
+    describe "posts" do
+      it "returns user posts" do
+        user = FactoryGirl.create(:user)
+        post1 = FactoryGirl.create(:post, user_id: user.id)
+        post2 = FactoryGirl.create(:post, user_id: user.id)
+        expect(user.posts.all.map(&:id)).to eq([post1.id, post2.id])
+      end
+    end
+  end
+
+  describe "Hooks" do
+    context "after create" do
+      it "send email confirmation" do
+        allow_any_instance_of(User).to receive(:send_confirmation).and_return(true)
+        user = FactoryGirl.create(:user_unconfirmed)
+        expect(user).to have_received(:send_confirmation)
       end
     end
   end

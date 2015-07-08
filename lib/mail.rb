@@ -1,14 +1,6 @@
 require 'net/smtp'
 require 'erb'
 
-class Prueba
-  @@hola = nil
-
-  def self.hola
-    @@hola
-  end
-end
-
 module Grapi
   class Mail
     attr_accessor :server, :to, :from, :subject, :template, :port

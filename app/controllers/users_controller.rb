@@ -1,8 +1,5 @@
 module Grapi
   class PostsAPI < Grape::API
-    helpers do
-    end
-
     resource :posts do
       post do
         params_list = ['name', 'email', 'password']
