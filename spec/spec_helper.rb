@@ -1,3 +1,5 @@
+ENV['ENV'] = 'test'
+
 require 'grape'
 require 'mongolow'
 require 'rack/cors'
@@ -10,10 +12,9 @@ require_all 'app'
 require_all 'spec/factories'
 require_all 'spec/support'
 
-ENV['ENV'] = 'test'
+Grapi::Config.load(ENV['ENV'])
 
-Grapi::Config.load('test')
-Mongolow::Driver.initialize('127.0.0.1', 27017, 'grapi_test')
+Mongolow.initialize
 Mongolow::Driver.drop_database
 
 RSpec.configure do |config|

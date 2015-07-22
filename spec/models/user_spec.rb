@@ -4,28 +4,48 @@ describe User do
   describe "Fields" do
     it { is_expected.to have_field('name') }
     it { is_expected.to have_field('email') }
-    it { is_expected.to have_field('password') }
+    it { is_expected.to have_field('encrypted_password') }
     it { is_expected.to have_field('session_token') }
   end
 
   describe "Validations" do
-    it { is_expected.to validate_presence_of('name') }
     it { is_expected.to validate_presence_of('email') }
     it { is_expected.to validate_presence_of('password') }
+
+    context "when user has password" do
+      it "should validate presence of password_confirmation" do
+        user = User.new(password: '123456')
+        user.validate
+        expect(user._errors['password_confirmation']).to be_include('blank')
+      end
+
+      it "should validate match of password_confirmation" do
+        user = User.new(password: '123456', password_confirmation: 'invalid')
+        user.validate
+        expect(user._errors['password_confirmation']).to be_include('match')
+      end
+    end
   end
 
   describe "Class methods" do
-    describe "generate_token" do
+    describe "generate_session_token" do
       it "returns valid session token" do
         allow(SecureRandom).to receive(:base64).and_return('2+')
-        expect(User.generate_token).to eq('20')
+        expect(User.generate_session_token).to eq('20')
       end
     end
 
-    describe "get_authenticated_user" do
-      it "returns authenticated user" do
+    describe "generate_confirmation_token" do
+      it "returns valid session token" do
+        allow(SecureRandom).to receive(:base64).and_return('2+')
+        expect(User.generate_confirmation_token).to eq('20')
+      end
+    end
+
+    describe "get_authenticated_model" do
+      it "returns authenticated model" do
         user = FactoryGirl.create(:user, password: '123456')
-        expect(User.get_authenticated_user(user.email, '123456').email).to eq(user.email)
+        expect(User.get_authenticated_model(user.email, '123456').email).to eq(user.email)
       end
     end
   end

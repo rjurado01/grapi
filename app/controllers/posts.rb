@@ -11,12 +11,12 @@ module Grapi
         error!('Not Found', 404) unless @model
       end
 
-      def autorize_resource
-        error!('Forbidden', 403) unless @model.authorize!(@current_user)
+      def authorize_resource
+        error!('Forbidden', 403) unless @model.authorize!(current_user)
       end
 
       def permited_params
-        filter_params(['title', 'text', 'user_id'])
+        filter_data(['title', 'text'])
       end
     end
 
@@ -33,14 +33,13 @@ module Grapi
       end
 
       post do
-        @model = Post.new(permited_params)
-        @model.save_post(@current_user)
+        @model = Post.create(permited_params.merge(user_id: current_user.id))
         respond_with @model
       end
 
       get ':id' do
         get_resource
-        @model.template
+        respond_with @model
       end
 
       put ':id' do
@@ -51,7 +50,7 @@ module Grapi
 
       delete ':id' do
         get_resource
-        autorize_resource
+        authorize_resource
         @model.destroy
         status 204
       end

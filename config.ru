@@ -6,9 +6,11 @@ require 'require_all'
 require_all 'lib'
 require_all 'app'
 
-Grapi::Config.load(ENV['ENV'] || 'development')
+# intialize database
+Mongolow.initialize
 
-Mongolow::Driver.initialize('127.0.0.1', 27017, 'database_name')
+# load grapi configs
+Grapi::Config.load(ENV['ENV'] || 'development')
 
 use Rack::Cors do
   allow do

@@ -5,7 +5,7 @@ module Grapi
         check_params(['email', 'password'])
 
         # get user from database
-        user = User.get_authenticated_user(params['email'], params['password'])
+        user = User.get_authenticated_model(params['email'], params['password'])
 
         if user
           user.ensure_session_token!

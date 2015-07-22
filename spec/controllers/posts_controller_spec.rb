@@ -13,6 +13,8 @@ describe Grapi::PostsAPI do
   end
 
   let(:result) { JSON.parse(last_response.body) }
+  let(:data) { result['data'] }
+  let(:errors) { result['errors'] }
 
   describe "GET #index" do
     before :all do
@@ -29,11 +31,11 @@ describe Grapi::PostsAPI do
       end
 
       it "returns all posts" do
-        expect(result.size).to eq(2)
+        expect(data.size).to eq(2)
       end
 
       it "returns correct JSON" do
-        expect(result.all? {|post| post.key?('title')}).to be_truthy
+        expect(data.all? {|post| post.key?('title')}).to be_truthy
       end
     end
 
@@ -41,7 +43,7 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         get "/posts"
         expect(last_response.status).to eq(422)
-        expect(result['errors']['session_token']).to eq('blank')
+        expect(errors['session_token']).to eq('blank')
       end
     end
 
@@ -56,7 +58,7 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         get "/posts", session_token: @user.session_token
         expect(last_response.status).to eq(422)
-        expect(result['errors']['user_id']).to eq('blank')
+        expect(errors['user_id']).to eq('blank')
       end
     end
 
@@ -83,9 +85,9 @@ describe Grapi::PostsAPI do
       end
 
       it "returns post" do
-        expect(result['title']).to eq(@post.title)
-        expect(result['text']).to eq(@post.text)
-        expect(result['user_id']).to eq(@post.user_id)
+        expect(data['title']).to eq(@post.title)
+        expect(data['text']).to eq(@post.text)
+        expect(data['user_id']).to eq(@post.user_id)
       end
     end
 
@@ -93,7 +95,7 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         get "/posts/#{@post.id}"
         expect(last_response.status).to eq(422)
-        expect(result['errors']['session_token']).to eq('blank')
+        expect(errors['session_token']).to eq('blank')
       end
     end
 
@@ -113,7 +115,7 @@ describe Grapi::PostsAPI do
     context "when all is ok" do
       before do
         post "/posts", session_token: @user.session_token,
-          user_id: @user.id, title: 'Title', text: 'Text'
+          data: {user_id: @user.id, title: 'Title', text: 'Text'}
       end
 
       it "returns 201 http status code" do
@@ -121,9 +123,9 @@ describe Grapi::PostsAPI do
       end
 
       it "returns new post" do
-        expect(result['title']).to eq('Title')
-        expect(result['text']).to eq('Text')
-        expect(result['user_id']).to eq(@user.id)
+        expect(data['title']).to eq('Title')
+        expect(data['text']).to eq('Text')
+        expect(data['user_id']).to eq(@user.id)
       end
 
       it "creates new post" do
@@ -137,9 +139,8 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         post "/posts", session_token: @user.session_token
         expect(last_response.status).to eq(422)
-        expect(result['title']).to eq('blank')
-        expect(result['text']).to eq('blank')
-        expect(result['user_id']).to eq('invalid')
+        expect(errors['title']).to be_include('blank')
+        expect(errors['text']).to be_include('blank')
         expect(Post.count).to eq(0)
       end
     end
@@ -148,7 +149,7 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         post "/posts"
         expect(last_response.status).to eq(422)
-        expect(result['errors']['session_token']).to eq('blank')
+        expect(errors['session_token']).to eq('blank')
       end
     end
 
@@ -168,7 +169,7 @@ describe Grapi::PostsAPI do
     context "when all is ok" do
       before do
         put "/posts/#{@post.id}", session_token: @user.session_token,
-          title: 'new_name', text: 'new_text'
+          data: {title: 'new_name', text: 'new_text'}
       end
 
       it "return 200 http status code" do
@@ -176,8 +177,8 @@ describe Grapi::PostsAPI do
       end
 
       it "returns updated post" do
-        expect(result['title']).to eq('new_name')
-        expect(result['text']).to eq('new_text')
+        expect(data['title']).to eq('new_name')
+        expect(data['text']).to eq('new_text')
       end
 
       it "update post" do
@@ -191,7 +192,7 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         delete "/posts/#{@post.id}"
         expect(last_response.status).to eq(422)
-        expect(result['errors']['session_token']).to eq('blank')
+        expect(errors['session_token']).to eq('blank')
       end
     end
 
@@ -235,7 +236,7 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         delete "/posts/1"
         expect(last_response.status).to eq(422)
-        expect(result['errors']['session_token']).to eq('blank')
+        expect(errors['session_token']).to eq('blank')
       end
     end
 

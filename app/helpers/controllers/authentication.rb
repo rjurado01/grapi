@@ -7,5 +7,9 @@ module Grapi
       @current_user = User.find({session_token: params[:session_token]}).first
       error!("401 Unauthorized", 401) unless @current_user
     end
+
+    def current_user
+      @current_user
+    end
   end
 end

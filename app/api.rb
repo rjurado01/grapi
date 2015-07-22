@@ -10,7 +10,12 @@ module Grapi
       include Grapi::Authentication
     end
 
-    mount Grapi::SessionsAPI
     mount Grapi::PostsAPI
+
+    # authentication
+    mount Grapi::RegistrationsAPI
+    mount Grapi::ConfirmationsAPI
+    mount Grapi::PasswordsAPI
+    mount Grapi::SessionsAPI
   end
 end
