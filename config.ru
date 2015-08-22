@@ -6,11 +6,14 @@ require 'require_all'
 require_all 'lib'
 require_all 'app'
 
-# intialize database
+# initialize enviroment
+ENV['ENV'] = 'development' unless ENV['ENV']
+
+# initialize database
 Mongolow.initialize
 
 # load grapi configs
-Grapi::Config.load(ENV['ENV'] || 'development')
+Grapi::Config.load(ENV['ENV'])
 
 use Rack::Cors do
   allow do

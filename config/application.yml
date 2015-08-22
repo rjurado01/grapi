@@ -1,0 +1,11 @@
+development:
+  SMTP_PORT: 1025
+  SMTP_SERVER: 'localhost'
+  SMTP_FROM: 'grapi@email.com'
+  MAIL_HOST: 'localhost:3000'
+
+test:
+  SMTP_FROM: 'grapi_test@email.com'
+  MAIL_HOST: 'localhost:3000'
+
+production:
