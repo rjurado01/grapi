@@ -9,10 +9,10 @@ module Grapi
 
       if params_list.class == Array
         params_list.each do |name|
-          errors[name] = 'blank' unless params[name]
+          add_error(errors, name, 'blank') unless params[name]
         end
       else
-        errors[params_list] = 'blank' unless params[params_list]
+        add_error(errors, params_list, 'blank') unless params[params_list]
       end
 
       error!({errors: errors}, 422) unless errors.empty?
@@ -23,10 +23,10 @@ module Grapi
 
       if params_list.class == Array
         params_list.each do |name|
-          errors[name] = 'blank' unless params['data'][name]
+          add_error(errors, name, 'blank') unless data[name]
         end
       else
-        errors[params_list] = 'blank' unless params['data'][params_list]
+        add_error(errors, params_list, 'blank') unless data[name]
       end
 
       error!({errors: errors}, 422) unless errors.empty?
@@ -50,6 +50,14 @@ module Grapi
     def check_and_filter_data(params_list)
       check_data(params_list)
       filter_data(params_list)
+    end
+
+    private
+
+    def add_error(errors, name, message)
+      errors = {} unless errors
+      errors[name] = [] unless errors[name]
+      errors[name].push message
     end
   end
 end

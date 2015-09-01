@@ -43,7 +43,7 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         get "/posts"
         expect(last_response.status).to eq(422)
-        expect(errors['session_token']).to eq('blank')
+        expect(errors['session_token']).to be_include('blank')
       end
     end
 
@@ -58,7 +58,7 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         get "/posts", session_token: @user.session_token
         expect(last_response.status).to eq(422)
-        expect(errors['user_id']).to eq('blank')
+        expect(errors['user_id']).to be_include('blank')
       end
     end
 
@@ -95,7 +95,7 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         get "/posts/#{@post.id}"
         expect(last_response.status).to eq(422)
-        expect(errors['session_token']).to eq('blank')
+        expect(errors['session_token']).to be_include('blank')
       end
     end
 
@@ -149,7 +149,7 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         post "/posts"
         expect(last_response.status).to eq(422)
-        expect(errors['session_token']).to eq('blank')
+        expect(errors['session_token']).to be_include('blank')
       end
     end
 
@@ -192,7 +192,7 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         delete "/posts/#{@post.id}"
         expect(last_response.status).to eq(422)
-        expect(errors['session_token']).to eq('blank')
+        expect(errors['session_token']).to be_include('blank')
       end
     end
 
@@ -236,7 +236,7 @@ describe Grapi::PostsAPI do
       it "returns 422 http status code" do
         delete "/posts/1"
         expect(last_response.status).to eq(422)
-        expect(errors['session_token']).to eq('blank')
+        expect(errors['session_token']).to be_include('blank')
       end
     end
 
